@@ -167,4 +167,14 @@ to refine candidate loci and prioritize variants for follow-up.
 
 # Citation
 
-If you use this repository or its methods, please cite the accompanying publication.
+'''
+@article{mekkes2026dynamic,
+  title={Dynamic interplay of polygenic risk across brain disorders, neuropathological endophenotypes, and neuropsychiatric symptoms},
+  author={Mekkes, Nienke Jacobine and Kumar, Shivam and Hoekstra, Eric and Marmolejo Garza, Alejandro and Dagkesamanskaia, Ekaterina and Wever, Dennis and Groot, Minke and Kreft, Karim L and Rajicic, Ana and Seelaar, Harro and others},
+  journal={medRxiv},
+  pages={2026--06},
+  year={2026},
+  publisher={Cold Spring Harbor Laboratory Press}
+}
+
+'''
