@@ -167,7 +167,7 @@ to refine candidate loci and prioritize variants for follow-up.
 
 # Citation
 
-```
+```bibtex
 @article{mekkes2026dynamic,
   title={Dynamic interplay of polygenic risk across brain disorders, neuropathological endophenotypes, and neuropsychiatric symptoms},
   author={Mekkes, Nienke Jacobine and Kumar, Shivam and Hoekstra, Eric and Marmolejo Garza, Alejandro and Dagkesamanskaia, Ekaterina and Wever, Dennis and Groot, Minke and Kreft, Karim L and Rajicic, Ana and Seelaar, Harro and others},
