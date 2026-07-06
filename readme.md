@@ -149,7 +149,6 @@ to refine candidate loci and prioritize variants for follow-up.
 
 - PLINK 2
 - bcftools
-- SHAPEIT
 - IMPUTE5
 - VCFtools
 
