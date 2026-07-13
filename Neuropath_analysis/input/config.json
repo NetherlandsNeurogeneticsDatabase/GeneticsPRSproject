@@ -1,0 +1,16 @@
+{
+  "input_file": "input/conclusion_unlabelled.csv",
+  "output_file": "output/ABC-with_score.csv",
+  "tsv": false,
+  "id_cols": ["NBB_nr", "Sentence_nr", "Sentence"],
+  "feature_cols": ["A", "B", "C"],
+  "patterns": [
+    "\\b(?:ABC)?\\b.{0,100}?\\bA\\s?([0-3])|\\bA\\s?([0-3]).{0,100}?\\b(?:ABC)?\\b",
+    "(?:criteria|classification|score|scoring|grading)\\W{0,10}?abc|abc\\W{0,10}?(?:criteria|classification|score|scoring|grading)"
+  ],
+  "prompt_file": "input/prompt_abc.json",
+  "n_runs": 10,
+  "token": 20,
+  "temp_val": 0.1,
+  "model_name": "meta-llama/Llama-3.1-8B-Instruct"
+}
