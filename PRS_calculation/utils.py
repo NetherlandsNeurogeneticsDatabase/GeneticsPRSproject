@@ -126,3 +126,128 @@ replace_dict_overview = {
     "PWS": "Other (excluded)", 
     "AD, PSYCH, SCZ": "Other (excluded)"
 }
+
+
+# --- FTD Diagnostic Translation Map ---
+REPLACE_DICT_FTD = {
+    # Psych detail
+    "BP, PSYCH": "BP", "MDD, PSYCH": "MDD",
+    "PSYCH, SCZ": "Other PSYCH",
+    "PSYCH_other": "Other PSYCH",
+    "PSYCH, PTSD": "Other PSYCH", 
+    "OCD, PSYCH": "Other PSYCH",
+    "NARCO, PSYCH": "Other PSYCH",
+    "ASD, PSYCH": "Other PSYCH",
+    "ADHD, PSYCH": "Other PSYCH",
+    
+    # MND together
+    "MND_other": "MND", "ALS, MND": "MND",
+    
+    # MS together
+    "MS, MS-PP": "MS", "MS, MS-SP": "MS", "MS, MS-RR": "MS", "MS_undefined": "MS",
+    
+    # Ataxia together
+    'ADCA, ATAXIA': "ATAXIA", 'ATAXIA, FA': "ATAXIA", "ATAXIA, SCA": "ATAXIA", 'ATAXIA, FXTAS': "ATAXIA",
+    
+    # PD and PDD combined
+    "PDD": "PD",
+    
+    # FTD together
+    "FTD, FTD-TAU, TAU": "FTD-TAU",
+    "FTD, PID": "FTD-PID", "FTD, FTD-TAU, PID": "FTD-PID",
+    "FTD, FTD-FUS": "FTD-FUS",
+    "ALS, FTD, FTD-FUS": "FTD-FUS",
+    
+    "FTD, FTD-TDP_undefined": "FTD-TDP",
+    "FTD, FTD-TDP-A, PROG": "FTD-TDP-A", "FTD, FTD-TDP-A": "FTD-TDP-A",
+    "C9ORF72, FTD-TDP-A": "FTD-TDP-A",
+    "C9ORF72, FTD, FTD-TDP-B": "FTD-TDP-B", "FTD, FTD-TDP-B": "FTD-TDP-B",
+    "FTD, FTD-TDP-C": "FTD-TDP-C", 
+    
+    ## B + MND
+    "FTD, FTD-TDP-B, MND_other": "FTD-TDP-B MND",
+    "ALS, FTD, FTD-TDP-B": "FTD-TDP-B MND",
+    "ALS, C9ORF72, FTD, FTD-TDP-B": "FTD-TDP-B MND",
+
+    ## small subgroup of MND + something else/mix
+    "FTD, FTD-TDP_undefined, MND_other": "FTD-TDP + MND",
+    "FTD, FTD-TDP-C, MND_other": "FTD-TDP + MND",
+    "ALS, FTD, FTD-TDP_undefined": "FTD-TDP + MND",
+    "ALS, C9ORF72, FTD, FTD-TDP-A, FTD-TDP-B": "FTD-TDP + MND",
+    "ALS, FTD, FTD-TDP-A, FTD-TDP-B": "FTD-TDP + MND",
+    
+    "FTD_undefined": "FTD_other",
+    "FTD, FTD-TDP-D": "FTD_other",
+    "FTD, FTD-UPS": "FTD_other",
+    "FTD, FTD-TDP-A, FTD-TDP-D": "FTD_other",
+    "C9ORF72, FTD, FTD-TDP-A, FTD-TDP-B": "FTD_other",
+    "FTD, FTD-TDP-B, FTD-TDP-C": "FTD_other",
+    "C9ORF72, FTD, FTD-TDP-B, FTD-TDP-C": "FTD_other",
+    "FTD, FTD-TDP-A, FTD-TDP-B, PROG": "FTD_other",  
+    
+    ## dementias
+    'DEM, ENCEPHA, VE': 'VE',
+    'AD, ENCEPHA, VE': 'AD + VE',
+    'ENCEPHA, VE': 'VE',
+    'DEM, SICC': 'SICC',
+    'DLB, SICC': 'DLB + SICC',
+    "AD, DLB": "AD + DLB",
+    "AD, ILBD": "AD + ILBD",
+    "AD, CA": "AD + CA",
+    "AD, PD": "AD + PD",
+    "AGD, DEM, SICC": "AGD",
+    "AGD, FTD, FTD-TAU": "AGD",
+    "CBD, FTD, FTD-TAU": "CBD",
+    "FTD, FTD-TAU, PSP, TAU": "PSP",
+    
+    # other groups
+    "IS": "Vascular pathology",
+    "CVA": "Vascular pathology",
+    "CVA, DEM": "Vascular pathology",
+    "SEP": "Vascular pathology",
+    
+    "ATPD, PD": "Other Neuropath",
+    "CA": "Other Neuropath",
+    "CJD": "Other Neuropath",
+    "ILBD, SICC": "Other Neuropath",
+    "PAL": "Other Neuropath",    
+    "DAI": "Other Neuropath",
+    "NIG": "Other Neuropath",
+    
+    "DEM, NAD": "Other dementia",
+    "KOR, WER": "Other dementia",
+    "DEM, ILBD, SICC": "Other dementia",
+    "CA, DEM, SICC": "Other dementia",
+    "ILBD, VD": "Other dementia",
+    "AD, FTD, FTD-TDP_undefined": "Other dementia",
+    "NHL": "Brain cancer",
+    "TUM": "Brain cancer",
+    
+    "Other": "Other (excluded)",
+    "ENCE": "Other (excluded)",
+    "DOWN": "Other (excluded)",
+    "LD_other": "Other (excluded)",
+    "EPI": "Other (excluded)",
+    "AD, MS": "Other (excluded)",
+    "COHA": "Other (excluded)",
+    "HMSN": "Other (excluded)",
+    "MEDIS": "Other (excluded)",
+    "DEV": "Other (excluded)",
+    "LDA": "Other (excluded)",
+    "FAHR": "Other (excluded)",
+    "NCSD": "Other (excluded)",
+    "ILBD, MDD, PSYCH": "Other (excluded)",
+    "ENCEPHA, PML": "Other (excluded)",
+    "NU": "Other (excluded)",
+    "NMO": "Other (excluded)",
+    "VDCAD": "Other (excluded)",
+    "HSP": "Other (excluded)",
+    "ALEX": "Other (excluded)",
+    "NPA": "Other (excluded)",
+    "Unknown": "Other (excluded)",
+    "FRAGX": "Other (excluded)",    
+    "DYSTO": "Other (excluded)", 
+    "PCAD": "Other (excluded)", 
+    "PWS": "Other (excluded)",  
+    "AD, PSYCH, SCZ": "Other (excluded)"
+}

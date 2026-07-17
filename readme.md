@@ -4,117 +4,155 @@ Analysis pipeline accompanying the neurogenomics study integrating genotype, neu
 
 ---
 
-# 1. Data Integration & LLM Pipeline
+## Directory Structure
 
-## Neuropathology Feature Extraction
+```text
+├── GWAS_QC/
+│   └── QC_plot.R
+├── LDSC_enrichment/
+│   ├── LDSC_correlation.ipynb
+│   ├── MAGMA_visualization.ipynb
+│   └── magma_analysis.sh
+├── Neuropath_analysis/
+│   ├── Generate_plot.ipynb
+│   ├── Perform_analysis.ipynb
+│   ├── input/
+│   │   ├── config.json
+│   │   └── prompt_abc.json
+│   ├── llm_extract.py
+│   ├── output/
+│   └── utils.py
+├── PCA/
+│   ├── PCA_cluster_on_map.ipynb
+│   └── output/
+├── PRS_calculation/
+│   ├── Data_prep.ipynb
+│   ├── PRS_analysis_workflow.ipynb
+│   ├── Symptoms_plot.R
+│   ├── output/
+│   ├── prs_calculation.sh
+│   └── utils.py
+├── loci_refinement/
+│   ├── chrom_plot.R
+│   └── heatmap_risk_loci.R
+└── readme.md
+```
+
+---
+
+## 1. Neuropathology Feature Extraction (`Neuropath_analysis/`)
+
 Converts unstructured neuropathology text reports into structured quantitative phenotypes using Large Language Models (LLMs).
 
-* **Input:** Raw clinical/neuropathological text reports from the NND.
-* **Function/Tool:** LLM pipeline script (`llm_pipeline`).
-* **Output:** Structured pathology feature tables (e.g., Braak stage, CERAD score, regional pathology burden).
+* **Scripts:** 
+  * `llm_extract.py` — Core feature extraction engine.
+  * `Perform_analysis.ipynb` — Downstream statistical analysis.
+  * `Generate_plot.ipynb` — Visualizations for neuropathological features.
+* **Input Data:** 
+  * Raw clinical/neuropathological text reports from the NND.
+  * Configuration files (`input/config.json`, `input/prompt_abc.json`).
+  * *Protocol:* Files are formatted as a matrix containing an `id` column, an unstructured `sentences` column, and an empty feature name column.
+* **Caution/Rule:** Features are filled in when explicitly clear from the text sentences; otherwise, they are left strictly blank.
+* **Output Data:** 
+  * Structured pathology feature tables exported into `output/` with columns populated based on explicit text criteria.
+* **Associated Paper Figure:**
+  * **Figure 5:** Neuropathology group analysis and structural phenotype mapping (contained within this separate modular folder workflow).
 
 ---
 
-# 2. Genomic Quality Control & Stratification
+## 2. Genomic Quality Control & Stratification (`GWAS_QC/` & `PCA/`)
 
-## SNP Genotype Quality Control
-Preprocesses and filters raw genomic data to remove systemic artifacts and low-quality samples/variants.
+Preprocesses and filters genomic datasets to eliminate artifacts, while evaluating geographic-driven population stratifications.
 
-* **Input:** Raw genotype dataset (VCF/PLINK format).
-* **Function/Tool:** `PLINK2`, `zcall`, `shape-it`, and `minimac4`.
-* **Key Filters Applied:** * Excess heterozygosity removal (Hardy-Weinberg equilibrium threshold $1 \times 10^{-5}$)
-    * Low call rate removal ($<97.5\%$ for variants and samples via `zcall`)
-    * Sex mismatch removal (`shape-it` & `minimac4`)
-    * Cryptic relatedness filtering (removal of closely related donors)
-    * Pre-association filters (Imputation score $>0.8$, MAF $>0.01$, HWE)
-* **Output:** Cleaned and imputed genotype dataset.
+### SNP Genotype Quality Control (`GWAS_QC/`)
+* **Script:** `QC_plot.R`
+* **Input Data:** Raw genotype datasets (VCF/PLINK format).
+* **Key Filters Applied:** Excess heterozygosity removal (HWE threshold $1 \times 10^{-5}$), low call rates ($<97.5\%$ via `zcall`), sex mismatches (`shape-it` & `minimac4`), and cryptic relatedness filtering.
+* **Output Data:** Cleaned, filtered, and imputed genomic matrices.
+* **Associated Paper Figure:**
+  * **Figure 1b:** Data distribution with a violin plot tracking donor age profiles.
 
-## PCA & Population Stratification
-Controls for ancestry-driven population structure across regional cohorts.
-
-* **Input:** Cleaned genotype dataset.
-* **Function/Tool:** `PLINK2` (MAF $\ge 0.01$, LD pruning $r^2 = 0.2$, PCA calculation), `Kruskal-Wallis` test, and `geopandas` visualization.
-* **Process:** Computes principal components (PCs) to strip out the first four ancestry components. Runs Kruskal-Wallis tests to detect unique PCs matching approximate geographical addresses across Dutch provinces, correcting via False Discovery Rate (FDR $<0.05$).
-* **Output:** Sig-PC clusters and geographical distribution heatmaps mapped by normalized donor counts per 100k.
+### PCA & Population Stratification (`PCA/`)
+* **Script:** `PCA_cluster_on_map.ipynb`
+* **Input Data:** Cleaned genotype dataset from the QC workflow.
+* **Process:** Extracts principal components via `PLINK2` (LD pruning $r^2 = 0.2$), strip-mining ancestry components, and matching variance arrays across regional Dutch provinces using Kruskal-Wallis testing (FDR $<0.05$).
+* **Output Data:** Ancestry PC components and distribution records saved inside `output/`.
+* **Associated Paper Figure:**
+  * **Figure 1c:** PCA cluster projection mapped onto geographic spatial plots of the Netherlands.
 
 ---
 
-# 3. Public GWAS Summary Statistics Refinement
+## 3. Public GWAS Summary Statistics Refinement (`loci_refinement/`)
 
-## Preprocessing & Standardization
-Standardizes heterogeneous external public GWAS files into uniform layouts before genetic risk estimation.
+Standardizes heterogeneous external public GWAS findings before down-stream hazard modeling and fine-mapping risk loci.
 
-* **Input:** Public GWAS summary statistics across selected use cases (FTLD-MND, Neuropsychiatric symptoms, Neuropathologically defined diagnosis).
-* **Function/Tool:** Custom processing script.
-* **Process:** Standardizes data schemas to GRCh37 coordinates, sorts by chromosome/position, and infers missing parameters (e.g., sample size per SNP derived from total sample size; Effect Allele Frequency (EAF) mapped via SbayesRC LD references; Standard Error (SE) estimated using the natural log of odds ratios).
-* **Output:** Harmonized, sorted GWAS summary statistic tables containing standard genomic headers.
-
----
-
-# 4. Genetic Correlation & Enrichment
-
-## Matrix-Based Co-regulation Analysis
-Quantifies global genetic overlaps and regional functional enrichment across traits.
-
-* **Input:** Cleaned NND genotype data and preprocessed public GWAS summary statistics.
-* **Function/Tool:** `LDSC` (Linkage Disequilibrium Score Regression) and `MAGMA`.
-* **Process:** 1. Runs global pairwise genetic correlation ($r_g$) via LDSC.
-    2. Runs gene/pathway-level enrichment mapping across specific Gene Ontology blocks (GOBP/GOCC/GOMF) via MAGMA.
-    3. Transforms long-form statistical records into structured matrices.
-* **Output:** Genetic correlation tables, MAGMA enrichment files, and matrix-based $-\log_{10}(\text{P-value})$ heatmaps.
+* **Scripts:** `chrom_plot.R`, `heatmap_risk_loci.R`
+* **Input Data:** External public summary statistics across specific cohorts (FTLD-MND, neuropsychiatric profiles).
+* **Process:** Harmonizes data configurations to GRCh37 coordinates, sorts genomic tracks, and completes missing parameters (EAF, SE, and sample size calculations).
+* **Output Data:** Unified summary statistics layouts containing standard genomic metrics.
+* **Associated Paper Figure:**
+  * **Figure 4:** Loci refinement diagrams, risk heatmaps, and target region definitions.
 
 ---
 
-# 5. Polygenic Risk Scores (PRS) Execution
+## 4. Genetic Correlation & Enrichment (`LDSC_enrichment/`)
 
-## PRS Calculation & Normalization
-Generates personalized genomic liability metrics across disease profiles.
+Tracks global genetic overlaps and regional functional enrichment metrics across target endophenotypes.
 
-* **Input:** Cleaned genotype data and standardized public GWAS summary statistics.
-* **Function/Tool:** `SbayesRC` (SNP risk effect estimation) and `PLINK2` (profile score multiplication).
-* **Process:** Computes raw individual risk burdens, standardizes dosage scores (centered to zero), and applies Z-score transformations.
-* **APOE Splitting Feature:** When isolated profiling is required, the APOE gene boundary (Chr 19: 44,409,039-) is trimmed away to record independent background PRSs, while tracking the standalone $e3/e4$ risk haplotype dose metrics independently.
-* **Output:** Normalized individual PRS vector profiles.
-
----
-
-# 6. Downstream Main Analysis & Visualizations
-
-## PRS Association Engine
-Executes statistical tests mapping genetic boundaries to endophenotypes, symptoms, and clinical labels.
-
-* **Input:** Individual PRS files, structured LLM-derived pathology data, and clinical diagnostic tables.
-* **Function/Tool:** Multi-test regression models, Permutation-based resampling mechanism (10k shuffles for empirical p-values), and Benjamini-Hochberg FDR correction.
-* **Output:** Publication-ready visual assets saved into targeted outputs:
-    * **Figure: Dot Plots** / **Figure: Scatter Plots** (Case vs. control mean PRS differences; PRS vs Neuropathology load maps)
-    * **Figure: Heatmap - Feature Association** (Clustered disease/shade intensity configurations)
-
-> **Note:** All script paths and file directories within these workflows are indicative. Please update configuration paths to match your unique deployment footprint.
+* **Scripts:** `magma_analysis.sh`, `LDSC_correlation.ipynb`, `MAGMA_visualization.ipynb`
+* **Input Data:** Cleaned NND genotype data and preprocessed public GWAS summaries.
+* **Process:** Formulates global pairwise link scores ($r_g$) via LDSC and drives pathway-level enrichment across Gene Ontology blocks using MAGMA.
+* **Output Data:** Clustered statistical grids and matrix logs.
+* **Associated Paper Figures:**
+  * **Figure 2e & 2f:** Linkage Disequilibrium Score Regression (LDSC) correlation profiles and trait heatmap matrices.
 
 ---
 
-# Software
+## 5. Polygenic Risk Score Pipeline (`PRS_calculation/`)
 
-## Genetics
-* PLINK 2
-* bcftools
-* IMPUTE5
-* VCFtools
-* LDSC
-* MAGMA
+Generates individualized genetic liability metrics across disease profiles to map clinical symptoms and mutations.
 
-## Python
-* pandas
-* NumPy
-* SciPy
-* scikit-learn
-* statsmodels
-* geopandas
-* matplotlib / seaborn
+* **Scripts:** 
+  * `prs_calculation.sh` & `Data_prep.ipynb` — Scoring setup and SbayesRC array profile calculations.
+  * `PRS_analysis_workflow.ipynb` — Regression mapping, case-control distributions, and group analysis.
+  * `Symptoms_plot.R` — Target visualization script isolating neuropsychiatric indicators.
+* **Input Data:** Cleaned internal genotypes, diagnostic registries, and external summary statistics weights.
+* **Process:** Compiles raw individual burdens, mean-centers dosage configurations, and handles **APOE splitting** (retaining background PRS components on Chr 19 separate from isolated $e3/e4$ haplotypes).
+* **Output Data:** Normalized individual PRS vector tracks and regression diagnostics inside `output/`.
+* **Associated Paper Figures:**
+  * **Figure 2a, b, c:** Three distinct violin plots assessing specific polygenic risk score distributions.
+  * **Figure 2d:** Dot plot showing associations between specific polygenic risk scores and diagnostic states.
+  * **Figure 3a:** Dot plot mapping risk trends across Frontotemporal Dementia (FTLD) subgroups.
+  * **Figure 3b, c, d, e:** Violin plots outlining polygenic scores stratified by explicit genetic mutation status (e.g., *C9orf72* status).
+  * **Figure 6:** Symptoms analysis and dot plots connecting polygenic risk metrics with neuropsychiatric manifestations.
 
 ---
 
-# Citation
+## Prerequisites & Installation
+
+### Core Software Environment
+Ensure your local compute node has access to both **Python (3.8+)** and **R (4.0.0+)** environments.
+
+#### Required Command Line Tools:
+* `PLINK 2`
+* `bcftools`
+* `IMPUTE5`
+* `VCFtools`
+* `LDSC`
+* `MAGMA`
+
+#### R Library Setup:
+```R
+if (!requireNamespace("devtools", quietly = TRUE))
+    install.packages("devtools")
+
+# Biological data scaling packages
+devtools::install_github("privefl/bigsnpr")
+```
+
+---
+
+## Citation
 
 ```bibtex
 @article{mekkes2026dynamic,
@@ -125,3 +163,4 @@ Executes statistical tests mapping genetic boundaries to endophenotypes, symptom
   year={2026},
   publisher={Cold Spring Harbor Laboratory Press}
 }
+```
