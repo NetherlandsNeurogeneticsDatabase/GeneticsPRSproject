@@ -52,7 +52,6 @@ Converts unstructured neuropathology text reports into structured quantitative p
   * Raw clinical/neuropathological text reports from the NND.
   * Configuration files (`input/config.json`, `input/prompt_abc.json`).
   * *Protocol:* Files are formatted as a matrix containing an `id` column, an unstructured `sentences` column, and an empty feature name column.
-* **Caution/Rule:** Features are filled in when explicitly clear from the text sentences; otherwise, they are left strictly blank.
 * **Output Data:** 
   * Structured pathology feature tables exported into `output/` with columns populated based on explicit text criteria.
 * **Associated Paper Figure:**
@@ -75,7 +74,6 @@ Preprocesses and filters genomic datasets to eliminate artifacts, while evaluati
 ### PCA & Population Stratification (`PCA/`)
 * **Script:** `PCA_cluster_on_map.ipynb`
 * **Input Data:** Cleaned genotype dataset from the QC workflow.
-* **Process:** Extracts principal components via `PLINK2` (LD pruning $r^2 = 0.2$), strip-mining ancestry components, and matching variance arrays across regional Dutch provinces using Kruskal-Wallis testing (FDR $<0.05$).
 * **Output Data:** Ancestry PC components and distribution records saved inside `output/`.
 * **Associated Paper Figure:**
   * **Figure 1c:** PCA cluster projection mapped onto geographic spatial plots of the Netherlands.
@@ -88,7 +86,6 @@ Standardizes heterogeneous external public GWAS findings before down-stream haza
 
 * **Scripts:** `chrom_plot.R`, `heatmap_risk_loci.R`
 * **Input Data:** External public summary statistics across specific cohorts (FTLD-MND, neuropsychiatric profiles).
-* **Process:** Harmonizes data configurations to GRCh37 coordinates, sorts genomic tracks, and completes missing parameters (EAF, SE, and sample size calculations).
 * **Output Data:** Unified summary statistics layouts containing standard genomic metrics.
 * **Associated Paper Figure:**
   * **Figure 4:** Loci refinement diagrams, risk heatmaps, and target region definitions.
@@ -101,7 +98,6 @@ Tracks global genetic overlaps and regional functional enrichment metrics across
 
 * **Scripts:** `magma_analysis.sh`, `LDSC_correlation.ipynb`, `MAGMA_visualization.ipynb`
 * **Input Data:** Cleaned NND genotype data and preprocessed public GWAS summaries.
-* **Process:** Formulates global pairwise link scores ($r_g$) via LDSC and drives pathway-level enrichment across Gene Ontology blocks using MAGMA.
 * **Output Data:** Clustered statistical grids and matrix logs.
 * **Associated Paper Figures:**
   * **Figure 2e & 2f:** Linkage Disequilibrium Score Regression (LDSC) correlation profiles and trait heatmap matrices.
@@ -117,7 +113,6 @@ Generates individualized genetic liability metrics across disease profiles to ma
   * `PRS_analysis_workflow.ipynb` — Regression mapping, case-control distributions, and group analysis.
   * `Symptoms_plot.R` — Target visualization script isolating neuropsychiatric indicators.
 * **Input Data:** Cleaned internal genotypes, diagnostic registries, and external summary statistics weights.
-* **Process:** Compiles raw individual burdens, mean-centers dosage configurations, and handles **APOE splitting** (retaining background PRS components on Chr 19 separate from isolated $e3/e4$ haplotypes).
 * **Output Data:** Normalized individual PRS vector tracks and regression diagnostics inside `output/`.
 * **Associated Paper Figures:**
   * **Figure 2a, b, c:** Three distinct violin plots assessing specific polygenic risk score distributions.
@@ -140,6 +135,12 @@ Ensure your local compute node has access to both **Python (3.8+)** and **R (4.0
 * `VCFtools`
 * `LDSC`
 * `MAGMA`
+
+#### Python Library setup
+
+```bash
+pip install pandas numpy scipy scikit-learn statsmodels geopandas matplotlib seaborn
+
 
 #### R Library Setup:
 ```R
