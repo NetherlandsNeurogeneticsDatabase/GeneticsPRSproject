@@ -136,11 +136,11 @@ Ensure your local compute node has access to both **Python (3.8+)** and **R (4.0
 * `LDSC`
 * `MAGMA`
 
-#### Python Library setup
-
+#### Python Dependencies
+Install the required data science, spatial, and modeling libraries via `pip`:
 ```bash
 pip install pandas numpy scipy scikit-learn statsmodels geopandas matplotlib seaborn
-
+```
 
 #### R Library Setup:
 ```R
